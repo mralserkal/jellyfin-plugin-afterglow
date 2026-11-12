@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kiketorres98/jellyfin-plugin-afterglow/main/logo.png",
     "versions": [
       {
+        "version": "12.4.0.100",
+        "changelog": "Top 10 modes: rated and daily",
+        "targetAbi": "12.4.0.0",
+        "sourceUrl": "https://github.com/mralserkal/jellyfin-plugin-afterglow/releases/download/v12.4.0.100/afterglow_12.4.0.100.zip",
+        "checksum": "CCCF1041FCF63B263C68561AE0DF48C8",
+        "timestamp": "2026-11-12T20:17:52Z"
+      },
+      {
         "version": "12.4.0.0",
         "changelog": "Built for Jellyfin 12.4.0. Fixes: the billboard, top 10 and side menu libraries no longer carry over to the next person who signs in on the same page; an address with a stray % no longer stops the plugin; closing Tonight while it loads no longer errors; the plugin starts when someone signs in late; quality marks wait before retrying after a failure.",
         "targetAbi": "12.4.0.0",
