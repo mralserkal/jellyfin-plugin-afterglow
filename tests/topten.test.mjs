@@ -34,6 +34,38 @@ describe('topTitles', () => {
   });
 });
 
+describe('dailyTitles', () => {
+  const pool = Array.from({ length: 50 }, (_, n) => movie('m' + n));
+
+  test('gives ten titles, all from the pool, without repeats', () => {
+    const picks = ag.dailyTitles(pool, 20000, 10, 3);
+    assert.equal(picks.length, 10);
+    assert.equal(new Set(picks.map((i) => i.Id)).size, 10);
+  });
+
+  test('the same day always gives the same titles in the same order', () => {
+    const first = ag.dailyTitles(pool, 20000, 10, 3).map((i) => i.Id);
+    const again = ag.dailyTitles(pool, 20000, 10, 3).map((i) => i.Id);
+    assert.deepEqual(first, again);
+  });
+
+  test('another day gives other titles', () => {
+    const today = ag.dailyTitles(pool, 20000, 10, 3).map((i) => i.Id);
+    const tomorrow = ag.dailyTitles(pool, 20001, 10, 3).map((i) => i.Id);
+    assert.notDeepEqual(today, tomorrow);
+  });
+
+  test('does not change the list it is given', () => {
+    const copy = pool.map((i) => i.Id);
+    ag.dailyTitles(pool, 20000, 10, 3);
+    assert.deepEqual(pool.map((i) => i.Id), copy);
+  });
+
+  test('shows nothing when there are fewer titles than the minimum', () => {
+    assert.deepEqual(ag.dailyTitles([movie('a'), movie('b')], 20000, 10, 3), []);
+  });
+});
+
 describe('topTenSpot', () => {
   const sections = [
     { visible: true, monitor: '' },

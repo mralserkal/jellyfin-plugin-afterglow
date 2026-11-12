@@ -10,214 +10,214 @@
 
   // ---------- core ----------
   (function (ag) {
-    /* Core: small helpers shared by every feature. (All modules see the same `ag` object.) */
-    
-    /** Builds an element: ag.el('a', { class: 'x', href: '#/home' }, ['text', otherElement]). */
-    ag.el = function (tag, props, children) {
-      var node = document.createElement(tag);
-      Object.keys(props || {}).forEach(function (key) {
-        var value = props[key];
-        if (value === undefined || value === null || value === false) return;
-        if (key === 'class') node.className = value;
-        else if (key === 'text') node.textContent = value;
-        else if (key.indexOf('on') === 0 && typeof value === 'function') node.addEventListener(key.slice(2), value);
-        else node.setAttribute(key, value === true ? '' : value);
-      });
-      (children || []).forEach(function (child) {
-        if (child === null || child === undefined) return;
-        node.appendChild(typeof child === 'string' ? document.createTextNode(child) : child);
-      });
-      return node;
-    };
-    
-    /** 'desktop', 'mobile' or 'tv', as the web client itself decided (it puts a layout-* class on <html>). */
-    ag.layout = function () {
-      var classes = document.documentElement.className;
-      if (classes.indexOf('layout-tv') >= 0) return 'tv';
-      if (classes.indexOf('layout-mobile') >= 0) return 'mobile';
-      return 'desktop';
-    };
-    
-    ag.debounce = function (fn, wait) {
-      var timer = 0;
-      return function () {
-        var args = arguments;
-        window.clearTimeout(timer);
-        timer = window.setTimeout(function () { fn.apply(null, args); }, wait);
-      };
-    };
-    
-    /** The part of the address after "#/" and before "?": "home", "movies", "details"… */
-    ag.pageName = function () {
-      return (location.hash || '').replace(/^#\/?/, '').split('?')[0];
-    };
-    
-    /** decodeURIComponent that gives the text back as it is when it is not a valid escape (a lone "%" in an address). */
-    ag.decode = function (text) {
-      try { return decodeURIComponent(text); } catch (e) { return text; }
-    };
-    
-    /** The query part of the address as an object. */
-    ag.pageParams = function () {
-      var query = (location.hash.split('?')[1] || '');
-      var out = {};
-      query.split('&').forEach(function (pair) {
-        if (!pair) return;
-        var parts = pair.split('=');
-        out[ag.decode(parts[0])] = ag.decode(parts[1] || '');
-      });
-      return out;
-    };
-    
-    /**
-     * Remembers what `load()` answered, once for each person signed in: someone else signing in on the same page (no reload)
-     * gets their own answer, never the previous person's. A failed answer is not kept.
-     */
-    ag.perUser = function (load) {
-      var answers = {};
-      return function () {
-        var user = window.ApiClient.getCurrentUserId();
-        if (!answers[user]) {
-          answers[user] = Promise.resolve(load()).catch(function (error) {
-            delete answers[user];
-            throw error;
-          });
-        }
-        return answers[user];
-      };
-    };
-    
-    /** Lets an id be asked for again only `waitMs` after it failed, so a server that is down is not asked on every page change. */
-    ag.makeRetryGate = function (waitMs, clock) {
-      var now = clock || Date.now;
-      var until = {};
-      return {
-        canAsk: function (id) { return !(until[id] > now()); },
-        failed: function (id) { until[id] = now() + waitMs; },
-      };
-    };
-    
-    /** Calls `callback` now and whenever the page changes (address change, or the web client drawing a new page). */
-    ag.onPageChange = function (callback) {
-      var run = ag.debounce(callback, 120);
-      window.addEventListener('hashchange', run);
-      window.addEventListener('popstate', run);
-      document.addEventListener('viewshow', run);
-      callback();
-    };
-    
-    /** Like fetch, for this server's own API with the user's credentials. */
-    ag.items = function (query) {
-      var client = window.ApiClient;
-      return client.getItems(client.getCurrentUserId(), query);
-    };
-    
-    /** A web-client image address for an item. */
-    ag.imageUrl = function (id, type, params) {
-      return window.ApiClient.getUrl('Items/' + id + '/Images/' + type, params || {});
-    };
-    
-    /** The page's language as two letters ("it", "en"…), for the few words the plugin writes itself. */
-    ag.language = function () {
-      return (document.documentElement.lang || navigator.language || 'en').slice(0, 2).toLowerCase();
-    };
-    
-    /** The address of an item's page in the web client. */
-    ag.itemHref = function (id) {
-      return '#/details?id=' + id;
-    };
-    
-    /** Plays an item with the web client's own player: opens its page and presses the Play button there. */
-    ag.play = function (id) {
-      ag.pendingPlay = { id: id, until: Date.now() + 8000 };
-      if (location.hash === ag.itemHref(id)) ag.pressPendingPlay();
-      else location.hash = ag.itemHref(id);
-    };
-    
-    ag.pressPendingPlay = function () {
-      var wanted = ag.pendingPlay;
-      if (!wanted) return;
-      if (Date.now() > wanted.until) { ag.pendingPlay = null; return; }
-      if (ag.pageParams().id !== wanted.id) return;
-      var button = document.querySelector('.btnPlay:not(.hide)');
-      if (!button) { window.setTimeout(ag.pressPendingPlay, 250); return; }
-      ag.pendingPlay = null;
-      button.click();
-    };
+    /* Core: small helpers shared by every feature. (All modules see the same `ag` object.) */    
+        
+    /** Builds an element: ag.el('a', { class: 'x', href: '#/home' }, ['text', otherElement]). */    
+    ag.el = function (tag, props, children) {    
+      var node = document.createElement(tag);    
+      Object.keys(props || {}).forEach(function (key) {    
+        var value = props[key];    
+        if (value === undefined || value === null || value === false) return;    
+        if (key === 'class') node.className = value;    
+        else if (key === 'text') node.textContent = value;    
+        else if (key.indexOf('on') === 0 && typeof value === 'function') node.addEventListener(key.slice(2), value);    
+        else node.setAttribute(key, value === true ? '' : value);    
+      });    
+      (children || []).forEach(function (child) {    
+        if (child === null || child === undefined) return;    
+        node.appendChild(typeof child === 'string' ? document.createTextNode(child) : child);    
+      });    
+      return node;    
+    };    
+        
+    /** 'desktop', 'mobile' or 'tv', as the web client itself decided (it puts a layout-* class on <html>). */    
+    ag.layout = function () {    
+      var classes = document.documentElement.className;    
+      if (classes.indexOf('layout-tv') >= 0) return 'tv';    
+      if (classes.indexOf('layout-mobile') >= 0) return 'mobile';    
+      return 'desktop';    
+    };    
+        
+    ag.debounce = function (fn, wait) {    
+      var timer = 0;    
+      return function () {    
+        var args = arguments;    
+        window.clearTimeout(timer);    
+        timer = window.setTimeout(function () { fn.apply(null, args); }, wait);    
+      };    
+    };    
+        
+    /** The part of the address after "#/" and before "?": "home", "movies", "details"… */    
+    ag.pageName = function () {    
+      return (location.hash || '').replace(/^#\/?/, '').split('?')[0];    
+    };    
+        
+    /** decodeURIComponent that gives the text back as it is when it is not a valid escape (a lone "%" in an address). */    
+    ag.decode = function (text) {    
+      try { return decodeURIComponent(text); } catch (e) { return text; }    
+    };    
+        
+    /** The query part of the address as an object. */    
+    ag.pageParams = function () {    
+      var query = (location.hash.split('?')[1] || '');    
+      var out = {};    
+      query.split('&').forEach(function (pair) {    
+        if (!pair) return;    
+        var parts = pair.split('=');    
+        out[ag.decode(parts[0])] = ag.decode(parts[1] || '');    
+      });    
+      return out;    
+    };    
+        
+    /**    
+     * Remembers what `load()` answered, once for each person signed in: someone else signing in on the same page (no reload)    
+     * gets their own answer, never the previous person's. A failed answer is not kept.    
+     */    
+    ag.perUser = function (load) {    
+      var answers = {};    
+      return function () {    
+        var user = window.ApiClient.getCurrentUserId();    
+        if (!answers[user]) {    
+          answers[user] = Promise.resolve(load()).catch(function (error) {    
+            delete answers[user];    
+            throw error;    
+          });    
+        }    
+        return answers[user];    
+      };    
+    };    
+        
+    /** Lets an id be asked for again only `waitMs` after it failed, so a server that is down is not asked on every page change. */    
+    ag.makeRetryGate = function (waitMs, clock) {    
+      var now = clock || Date.now;    
+      var until = {};    
+      return {    
+        canAsk: function (id) { return !(until[id] > now()); },    
+        failed: function (id) { until[id] = now() + waitMs; },    
+      };    
+    };    
+        
+    /** Calls `callback` now and whenever the page changes (address change, or the web client drawing a new page). */    
+    ag.onPageChange = function (callback) {    
+      var run = ag.debounce(callback, 120);    
+      window.addEventListener('hashchange', run);    
+      window.addEventListener('popstate', run);    
+      document.addEventListener('viewshow', run);    
+      callback();    
+    };    
+        
+    /** Like fetch, for this server's own API with the user's credentials. */    
+    ag.items = function (query) {    
+      var client = window.ApiClient;    
+      return client.getItems(client.getCurrentUserId(), query);    
+    };    
+        
+    /** A web-client image address for an item. */    
+    ag.imageUrl = function (id, type, params) {    
+      return window.ApiClient.getUrl('Items/' + id + '/Images/' + type, params || {});    
+    };    
+        
+    /** The page's language as two letters ("it", "en"…), for the few words the plugin writes itself. */    
+    ag.language = function () {    
+      return (document.documentElement.lang || navigator.language || 'en').slice(0, 2).toLowerCase();    
+    };    
+        
+    /** The address of an item's page in the web client. */    
+    ag.itemHref = function (id) {    
+      return '#/details?id=' + id;    
+    };    
+        
+    /** Plays an item with the web client's own player: opens its page and presses the Play button there. */    
+    ag.play = function (id) {    
+      ag.pendingPlay = { id: id, until: Date.now() + 8000 };    
+      if (location.hash === ag.itemHref(id)) ag.pressPendingPlay();    
+      else location.hash = ag.itemHref(id);    
+    };    
+        
+    ag.pressPendingPlay = function () {    
+      var wanted = ag.pendingPlay;    
+      if (!wanted) return;    
+      if (Date.now() > wanted.until) { ag.pendingPlay = null; return; }    
+      if (ag.pageParams().id !== wanted.id) return;    
+      var button = document.querySelector('.btnPlay:not(.hide)');    
+      if (!button) { window.setTimeout(ag.pressPendingPlay, 250); return; }    
+      ag.pendingPlay = null;    
+      button.click();    
+    };    
     
   })(ag);
 
   // ---------- quality ----------
   (function (ag) {
-    /* Quality marks: small "4K" / "2K" / "HDR" / "Dolby Vision" marks in the corner of posters. */
-    
-    function resolutionLabel(video) {
-      var width = video.Width || 0;
-      var height = video.Height || 0;
-      if (width >= 3400 || height >= 2000) return '4K';
-      if (width >= 2400 || height >= 1300) return '2K';
-      return undefined;
-    }
-    
-    function rangeLabel(video) {
-      var range = video.VideoRangeType || '';
-      if (range.indexOf('DOVI') === 0) return 'Dolby Vision';
-      if (range.indexOf('HDR') === 0 || range === 'HLG') return 'HDR';
-      return undefined;
-    }
-    
-    /** The marks for a video stream: resolution first (only 4K / 2K), then the range. Plain 1080p gets none. */
-    ag.qualityLabels = function (video) {
-      if (!video) return [];
-      return [resolutionLabel(video), rangeLabel(video)].filter(Boolean);
-    };
-    
-    ag.startQualityMarks = function () {
-      var BATCH = 40;
-      var cache = new Map(); // item id -> labels
-      var asked = new Set();
-      var gate = ag.makeRetryGate(30000); // after a failure the server gets a rest, instead of being asked again at every change of the page
-    
-      function apply(card, labels) {
-        if (!labels.length || card.querySelector('.ag-tags')) return;
-        var inList = card.classList.contains('listItem');
-        var host = card.querySelector(inList ? '.listItemMediaInfo' : '.cardScalable');
-        if (!host) return;
-        var tags = ag.el('ul', { class: inList ? 'ag-tags ag-tags-row' : 'ag-tags', 'aria-label': 'Quality' }, labels.map(function (label) {
-          return ag.el('li', { text: label });
-        }));
-        if (inList) host.insertBefore(tags, host.firstChild); else host.appendChild(tags);
-      }
-    
-      function fetchLabels(ids) {
-        return ag.items({ Ids: ids.join(','), Fields: 'MediaStreams', EnableImages: false, EnableUserData: false })
-          .then(function (result) {
-            (result.Items || []).forEach(function (item) {
-              var video = (item.MediaStreams || []).filter(function (s) { return s.Type === 'Video'; })[0];
-              var labels = ag.qualityLabels(video);
-              cache.set(item.Id, labels);
-              document.querySelectorAll('[data-id="' + item.Id + '"].card, [data-id="' + item.Id + '"].listItem').forEach(function (card) { apply(card, labels); });
-            });
-          })
-          .catch(function () { ids.forEach(function (id) { asked.delete(id); gate.failed(id); }); });
-      }
-    
-      function scan() {
-        var wanted = [];
-        document.querySelectorAll('.card[data-id], .listItem[data-id]').forEach(function (card) {
-          var type = card.dataset.type;
-          if (type !== 'Movie' && type !== 'Episode') return;
-          var id = card.dataset.id;
-          if (cache.has(id)) apply(card, cache.get(id));
-          else if (!asked.has(id) && gate.canAsk(id)) { asked.add(id); wanted.push(id); }
-        });
-        for (var i = 0; i < wanted.length; i += BATCH) fetchLabels(wanted.slice(i, i + BATCH));
-      }
-    
-      var scheduleScan = ag.debounce(scan, 300);
-      new MutationObserver(scheduleScan).observe(document.body, { childList: true, subtree: true });
-      scan();
-    };
+    /* Quality marks: small "4K" / "2K" / "HDR" / "Dolby Vision" marks in the corner of posters. */    
+        
+    function resolutionLabel(video) {    
+      var width = video.Width || 0;    
+      var height = video.Height || 0;    
+      if (width >= 3400 || height >= 2000) return '4K';    
+      if (width >= 2400 || height >= 1300) return '2K';    
+      return undefined;    
+    }    
+        
+    function rangeLabel(video) {    
+      var range = video.VideoRangeType || '';    
+      if (range.indexOf('DOVI') === 0) return 'Dolby Vision';    
+      if (range.indexOf('HDR') === 0 || range === 'HLG') return 'HDR';    
+      return undefined;    
+    }    
+        
+    /** The marks for a video stream: resolution first (only 4K / 2K), then the range. Plain 1080p gets none. */    
+    ag.qualityLabels = function (video) {    
+      if (!video) return [];    
+      return [resolutionLabel(video), rangeLabel(video)].filter(Boolean);    
+    };    
+        
+    ag.startQualityMarks = function () {    
+      var BATCH = 40;    
+      var cache = new Map(); // item id -> labels    
+      var asked = new Set();    
+      var gate = ag.makeRetryGate(30000); // after a failure the server gets a rest, instead of being asked again at every change of the page    
+        
+      function apply(card, labels) {    
+        if (!labels.length || card.querySelector('.ag-tags')) return;    
+        var inList = card.classList.contains('listItem');    
+        var host = card.querySelector(inList ? '.listItemMediaInfo' : '.cardScalable');    
+        if (!host) return;    
+        var tags = ag.el('ul', { class: inList ? 'ag-tags ag-tags-row' : 'ag-tags', 'aria-label': 'Quality' }, labels.map(function (label) {    
+          return ag.el('li', { text: label });    
+        }));    
+        if (inList) host.insertBefore(tags, host.firstChild); else host.appendChild(tags);    
+      }    
+        
+      function fetchLabels(ids) {    
+        return ag.items({ Ids: ids.join(','), Fields: 'MediaStreams', EnableImages: false, EnableUserData: false })    
+          .then(function (result) {    
+            (result.Items || []).forEach(function (item) {    
+              var video = (item.MediaStreams || []).filter(function (s) { return s.Type === 'Video'; })[0];    
+              var labels = ag.qualityLabels(video);    
+              cache.set(item.Id, labels);    
+              document.querySelectorAll('[data-id="' + item.Id + '"].card, [data-id="' + item.Id + '"].listItem').forEach(function (card) { apply(card, labels); });    
+            });    
+          })    
+          .catch(function () { ids.forEach(function (id) { asked.delete(id); gate.failed(id); }); });    
+      }    
+        
+      function scan() {    
+        var wanted = [];    
+        document.querySelectorAll('.card[data-id], .listItem[data-id]').forEach(function (card) {    
+          var type = card.dataset.type;    
+          if (type !== 'Movie' && type !== 'Episode') return;    
+          var id = card.dataset.id;    
+          if (cache.has(id)) apply(card, cache.get(id));    
+          else if (!asked.has(id) && gate.canAsk(id)) { asked.add(id); wanted.push(id); }    
+        });    
+        for (var i = 0; i < wanted.length; i += BATCH) fetchLabels(wanted.slice(i, i + BATCH));    
+      }    
+        
+      var scheduleScan = ag.debounce(scan, 300);    
+      new MutationObserver(scheduleScan).observe(document.body, { childList: true, subtree: true });    
+      scan();    
+    };    
     
   })(ag);
 
@@ -549,40 +549,40 @@
 
   // ---------- drawer ----------
   (function (ag) {
-    /* The web client's own menu (phones, tablets, TV): hides an entry that another plugin put in twice. */
-    
-    /** The positions of the entries whose address already appeared earlier in `hrefs`. */
-    ag.repeatedEntries = function (hrefs) {
-      var seen = {};
-      var repeats = [];
-      hrefs.forEach(function (href, index) {
-        if (!href) return;
-        if (seen[href]) repeats.push(index);
-        else seen[href] = true;
-      });
-      return repeats;
-    };
-    
-    ag.startDrawerCleanup = function () {
-      function clean() {
-        var drawer = document.querySelector('.MuiDrawer-root');
-        if (!drawer) return;
-        var rows = Array.prototype.slice.call(drawer.querySelectorAll('li')).filter(function (row) { return row.querySelector('a[href]'); });
-        var hrefs = rows.map(function (row) { return row.querySelector('a[href]').getAttribute('href'); });
-        ag.repeatedEntries(hrefs).forEach(function (index) { rows[index].setAttribute('data-ag-dup', ''); });
-    
-        // A group left with nothing visible goes too, with the divider above it.
-        drawer.querySelectorAll('.MuiList-root').forEach(function (list) {
-          var items = list.querySelectorAll('li');
-          if (!items.length || list.querySelector('li:not([data-ag-dup])')) return;
-          list.setAttribute('data-ag-dup', '');
-          var before = list.previousElementSibling;
-          if (before && /MuiDivider/.test(before.className)) before.setAttribute('data-ag-dup', '');
-        });
-      }
-      new MutationObserver(ag.debounce(clean, 100)).observe(document.body, { childList: true, subtree: true });
-      clean();
-    };
+    /* The web client's own menu (phones, tablets, TV): hides an entry that another plugin put in twice. */    
+        
+    /** The positions of the entries whose address already appeared earlier in `hrefs`. */    
+    ag.repeatedEntries = function (hrefs) {    
+      var seen = {};    
+      var repeats = [];    
+      hrefs.forEach(function (href, index) {    
+        if (!href) return;    
+        if (seen[href]) repeats.push(index);    
+        else seen[href] = true;    
+      });    
+      return repeats;    
+    };    
+        
+    ag.startDrawerCleanup = function () {    
+      function clean() {    
+        var drawer = document.querySelector('.MuiDrawer-root');    
+        if (!drawer) return;    
+        var rows = Array.prototype.slice.call(drawer.querySelectorAll('li')).filter(function (row) { return row.querySelector('a[href]'); });    
+        var hrefs = rows.map(function (row) { return row.querySelector('a[href]').getAttribute('href'); });    
+        ag.repeatedEntries(hrefs).forEach(function (index) { rows[index].setAttribute('data-ag-dup', ''); });    
+        
+        // A group left with nothing visible goes too, with the divider above it.    
+        drawer.querySelectorAll('.MuiList-root').forEach(function (list) {    
+          var items = list.querySelectorAll('li');    
+          if (!items.length || list.querySelector('li:not([data-ag-dup])')) return;    
+          list.setAttribute('data-ag-dup', '');    
+          var before = list.previousElementSibling;    
+          if (before && /MuiDivider/.test(before.className)) before.setAttribute('data-ag-dup', '');    
+        });    
+      }    
+      new MutationObserver(ag.debounce(clean, 100)).observe(document.body, { childList: true, subtree: true });    
+      clean();    
+    };    
     
   })(ag);
 
@@ -798,19 +798,21 @@
 
   // ---------- topten ----------
   (function (ag) {
-    /* Top 10: the titles watched most on this account, as a row of posters with big numbers. */    
+    /* Top 10: the titles watched most on this account (or, as settings, the best rated or ten shuffled each day), as a row of posters with big numbers. */    
         
     var TOP_LIMIT = 10;    
     var MIN_TITLES = 3; // a ranking of fewer titles is not worth showing    
     var PLAYS_LOOKED_AT = 400;    
+    var DAILY_POOL = 1000; // how many titles the daily shuffle draws from    
+    var MIN_RATING = 1; // titles without a community rating are left out of the "rated" ranking    
         
     var TOP_TEXT = {    
-      en: { title: 'Your top 10' },    
-      it: { title: 'I tuoi 10 più visti' },    
-      es: { title: 'Tus 10 más vistos' },    
-      fr: { title: 'Vos 10 plus regardés' },    
-      de: { title: 'Deine 10 meistgesehenen' },    
-      pt: { title: 'Os seus 10 mais vistos' },    
+      en: { daily: 'Picked for today', rated: 'Top rated', title: 'Your top 10' },    
+      it: { daily: 'Scelti per oggi', rated: 'I più votati', title: 'I tuoi 10 più visti' },    
+      es: { daily: 'Elegidas para hoy', rated: 'Mejor valoradas', title: 'Tus 10 más vistos' },    
+      fr: { daily: 'Sélection du jour', rated: 'Les mieux notés', title: 'Vos 10 plus regardés' },    
+      de: { daily: 'Auswahl für heute', rated: 'Am besten bewertet', title: 'Deine 10 meistgesehenen' },    
+      pt: { daily: 'Escolhidos para hoje', rated: 'Mais bem avaliados', title: 'Os seus 10 mais vistos' },    
     };    
     ag.textTables = ag.textTables || {};    
     ag.textTables.topTen = TOP_TEXT;    
@@ -844,6 +846,35 @@
       return ranked.length < (minTitles === undefined ? MIN_TITLES : minTitles) ? [] : ranked.slice(0, limit).map(function (entry) { return entry.item; });    
     };    
         
+    /** A repeatable stream of numbers in [0, 1) from a whole-number seed (mulberry32): the same seed always gives the same stream. */    
+    function seededRandom(seed) {    
+      var state = seed >>> 0;    
+      return function () {    
+        state = (state + 0x6D2B79F5) >>> 0;    
+        var t = state;    
+        t = Math.imul(t ^ (t >>> 15), t | 1);    
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);    
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;    
+      };    
+    }    
+        
+    /**    
+     * Ten titles shuffled by the day: the same `day` always gives the same titles in the same order (the order of `items`    
+     * must be stable, e.g. by name), and the next day gives others. Returns nothing below `minTitles` titles.    
+     */    
+    ag.dailyTitles = function (items, day, limit, minTitles) {    
+      if (items.length < (minTitles === undefined ? MIN_TITLES : minTitles)) return [];    
+      var random = seededRandom(Math.imul(day + 1, 2654435761));    
+      var shuffled = items.slice();    
+      for (var i = shuffled.length - 1; i > 0; i--) {    
+        var j = Math.floor(random() * (i + 1));    
+        var swap = shuffled[i];    
+        shuffled[i] = shuffled[j];    
+        shuffled[j] = swap;    
+      }    
+      return shuffled.slice(0, limit);    
+    };    
+        
     /**    
      * Where the shelf goes among the home page's shelves. `sections` describes them in order: { visible, monitor }, where    
      * `monitor` is the web client's data-monitor of the shelf (shelves of what is being watched start with "videoplayback").    
@@ -874,8 +905,9 @@
       }    
     }    
         
-    function buildRow(titles) {    
+    function buildRow(titles, mode) {    
       var words = TOP_TEXT[ag.language()] || TOP_TEXT.en;    
+      var heading = mode === 'rated' ? words.rated : mode === 'daily' ? words.daily : words.title;    
       var cards = titles.map(function (item, position) {    
         var tag = item.ImageTags && item.ImageTags.Primary;    
         return ag.el('a', { class: 'ag-top-card', href: ag.itemHref(item.Id), 'aria-label': (position + 1) + '. ' + item.Name }, [    
@@ -885,9 +917,14 @@
         ]);    
       });    
       return ag.el('section', { class: 'ag-top' }, [    
-        ag.el('h2', { class: 'ag-top-title', text: words.title }),    
+        ag.el('h2', { class: 'ag-top-title', text: heading }),    
         ag.el('div', { class: 'ag-top-scroller' }, cards),    
       ]);    
+    }    
+        
+    function mode() {    
+      var chosen = ag.config && ag.config.topTenMode;    
+      return chosen === 'rated' || chosen === 'daily' ? chosen : 'watched';    
     }    
         
     ag.startTopTen = function () {    
@@ -895,6 +932,23 @@
         
       // One answer for each person signed in: the ranking is made from the watch history of whoever is signed in.    
       var load = ag.perUser(function () {    
+        if (mode() === 'daily') {    
+          return ag.items({    
+            IncludeItemTypes: 'Movie,Series', Recursive: true, ImageTypes: 'Primary', SortBy: 'SortName', SortOrder: 'Ascending',    
+            Limit: DAILY_POOL, EnableImageTypes: 'Primary', ImageTypeLimit: 1, EnableUserData: false,    
+          }).then(function (result) {    
+            return ag.dailyTitles(result.Items || [], ag.dayNumber(), TOP_LIMIT);    
+          });    
+        }    
+        if (mode() === 'rated') {    
+          return ag.items({    
+            IncludeItemTypes: 'Movie,Series', Recursive: true, SortBy: 'CommunityRating', SortOrder: 'Descending',    
+            MinCommunityRating: MIN_RATING, Limit: TOP_LIMIT, EnableImageTypes: 'Primary', ImageTypeLimit: 1, EnableUserData: false,    
+          }).then(function (result) {    
+            var items = result.Items || [];    
+            return items.length < MIN_TITLES ? [] : items.slice(0, TOP_LIMIT);    
+          });    
+        }    
         return ag.items({    
           IncludeItemTypes: 'Movie,Episode', Recursive: true, Filters: 'IsPlayed', SortBy: 'DatePlayed', SortOrder: 'Descending',    
           Limit: PLAYS_LOOKED_AT, EnableImageTypes: 'Primary', ImageTypeLimit: 1, EnableUserData: false,    
@@ -911,7 +965,7 @@
         load().then(function (titles) {    
           var current = document.getElementById('homeTab');    
           if (!titles.length || !current || current.querySelector('.ag-top')) return;    
-          placeRow(current, buildRow(titles), (ag.config && ag.config.topTenPosition) || 'top');    
+          placeRow(current, buildRow(titles, mode()), (ag.config && ag.config.topTenPosition) || 'top');    
         }).catch(function () {}).then(function () { loading = false; });    
       }    
         
@@ -1253,6 +1307,7 @@
           var out = {};    
           Object.keys(DEFAULTS).forEach(function (key) { out[key] = config[key] === undefined ? DEFAULTS[key] : config[key] !== false; });    
           out.topTenPosition = typeof config.topTenPosition === 'string' ? config.topTenPosition : 'top';    
+          out.topTenMode = config.topTenMode === 'rated' || config.topTenMode === 'daily' ? config.topTenMode : 'watched';    
           out.qualityCorner = typeof config.qualityCorner === 'string' ? config.qualityCorner : 'bottomLeft';    
           return out;    
         });    

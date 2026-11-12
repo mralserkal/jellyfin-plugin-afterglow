@@ -18,6 +18,7 @@ function loadConfig() {
       var out = {};
       Object.keys(DEFAULTS).forEach(function (key) { out[key] = config[key] === undefined ? DEFAULTS[key] : config[key] !== false; });
       out.topTenPosition = typeof config.topTenPosition === 'string' ? config.topTenPosition : 'top';
+      out.topTenMode = config.topTenMode === 'rated' || config.topTenMode === 'daily' ? config.topTenMode : 'watched';
       out.qualityCorner = typeof config.qualityCorner === 'string' ? config.qualityCorner : 'bottomLeft';
       return out;
     });

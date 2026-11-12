@@ -14,7 +14,7 @@ Theme and plugin are separate on purpose: use the theme alone, or add the plugin
 | **Quality marks** | Small `4K`, `2K`, `HDR` and `Dolby Vision` marks on posters and list rows. Ordinary 1080p gets none, so the marks mean something. |
 | **Side menu** | The sections (home, favorites, your libraries, plus Discover/Requests if that plugin is installed) as a narrow rail of icons that opens when you point at it. Desktop layout only; it steps aside in the dashboard, the player and the sign-in pages. |
 | **Home billboard** | Three featured titles a day (unwatched first) with logo, facts, plot, Play and More info. The whole page takes the colours of the title on show. Replaces the Media Bar plugin's slideshow. |
-| **Top 10** | A shelf of the titles *you* watched most; episodes count for their series. Hidden until you have watched at least three titles. |
+| **Top 10** | A shelf of the titles *you* watched most (episodes count for their series), hidden until you have watched at least three titles. Or, in the settings, a "Top rated" shelf of the best community-rated movies and series, or a "Picked for today" shelf of ten titles shuffled every day. |
 | **Tonight** | "What shall we watch?": pick a mood and a length, then swipe through unwatched films. |
 | **Empty favorites** | A friendly message instead of a blank page. |
 

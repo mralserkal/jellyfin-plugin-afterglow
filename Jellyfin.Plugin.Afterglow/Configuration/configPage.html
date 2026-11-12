@@ -55,6 +55,15 @@
                 <h2 style="margin-top: 1.6em;">Where things go</h2>
 
                 <div class="selectContainer">
+                    <label class="selectLabel" for="TopTenMode">Top 10 ranks</label>
+                    <select is="emby-select" id="TopTenMode" class="emby-select-withcolor emby-select">
+                        <option value="watched">The titles you watched most</option>
+                        <option value="rated">The best community ratings</option>
+                        <option value="daily">Ten titles shuffled every day</option>
+                    </select>
+                </div>
+
+                <div class="selectContainer">
                     <label class="selectLabel" for="TopTenPosition">Top 10 on the home page</label>
                     <select is="emby-select" id="TopTenPosition" class="emby-select-withcolor emby-select">
                         <option value="top">Right under the billboard</option>
@@ -82,7 +91,7 @@
         (function () {
             var pluginId = 'd5e09db5-245d-4b8d-a8b5-1e5d48841ba6';
             var fields = ['QualityMarks', 'SideMenu', 'Hero', 'TopTen', 'Tonight'];
-            var choices = ['TopTenPosition', 'QualityCorner'];
+            var choices = ['TopTenMode', 'TopTenPosition', 'QualityCorner'];
 
             document.querySelector('#AfterglowConfigPage').addEventListener('pageshow', function () {
                 Dashboard.showLoadingMsg();

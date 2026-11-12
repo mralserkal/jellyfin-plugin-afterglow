@@ -25,6 +25,24 @@ public class ConfigChoicesTests
     }
 
     [Theory]
+    [InlineData("watched")]
+    [InlineData("rated")]
+    [InlineData("daily")]
+    public void A_known_top_ten_mode_is_kept(string given)
+    {
+        Assert.Equal(given, ConfigChoices.TopTenMode(given));
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("random")]
+    public void An_unknown_top_ten_mode_becomes_the_default(string? given)
+    {
+        Assert.Equal("watched", ConfigChoices.TopTenMode(given));
+    }
+
+    [Theory]
     [InlineData("bottomLeft")]
     [InlineData("bottomRight")]
     [InlineData("topLeft")]

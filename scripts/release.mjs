@@ -8,13 +8,13 @@ import { join } from 'node:path';
 export const PLUGIN = {
   guid: 'd5e09db5-245d-4b8d-a8b5-1e5d48841ba6',
   name: 'Afterglow',
-  owner: 'kiketorres98',
-  repo: 'kiketorres98/jellyfin-plugin-afterglow',
+  owner: 'mralserkal',
+  repo: 'mralserkal/jellyfin-plugin-afterglow',
   category: 'General',
   targetAbi: '12.4.0.0',
   description: 'The extras of the Afterglow theme: quality marks, a side menu, a home billboard, top 10 and a tonight picker.',
   overview: 'Adds small features to the Jellyfin web client that CSS alone cannot do. Needs the File Transformation plugin.',
-  imageUrl: 'https://raw.githubusercontent.com/kiketorres98/jellyfin-plugin-afterglow/main/logo.png',
+  imageUrl: 'https://raw.githubusercontent.com/mralserkal/jellyfin-plugin-afterglow/main/logo.png',
   dll: 'Jellyfin.Plugin.Afterglow.dll',
 };
 

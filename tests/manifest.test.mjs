@@ -8,7 +8,7 @@ const entry = (version) => versionEntry({ version, changelog: `v${version}`, che
 describe('manifest', () => {
   test('a version points at the release asset of its own tag', () => {
     const e = entry('0.2.0.0');
-    assert.equal(e.sourceUrl, 'https://github.com/kiketorres98/jellyfin-plugin-afterglow/releases/download/v0.2.0.0/afterglow_0.2.0.0.zip');
+    assert.equal(e.sourceUrl, 'https://github.com/mralserkal/jellyfin-plugin-afterglow/releases/download/v0.2.0.0/afterglow_0.2.0.0.zip');
     assert.equal(e.targetAbi, PLUGIN.targetAbi);
   });
 
@@ -21,7 +21,7 @@ describe('manifest', () => {
 
   test('the plugin entry carries the picture shown in the catalogue', () => {
     const manifest = addVersion([], entry('0.1.0.0'));
-    assert.match(manifest[0].imageUrl, /^https:\/\/raw\.githubusercontent\.com\/kiketorres98\/jellyfin-plugin-afterglow\/main\/logo\.png$/);
+    assert.match(manifest[0].imageUrl, /^https:\/\/raw\.githubusercontent\.com\/mralserkal\/jellyfin-plugin-afterglow\/main\/logo\.png$/);
   });
 
   test('a new version goes first and the old ones stay', () => {

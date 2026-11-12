@@ -23,6 +23,9 @@ public class PluginConfiguration : BasePluginConfiguration
     /// <summary>Gets or sets where the top 10 shelf goes: "top" (under the billboard), "afterContinue" or "end".</summary>
     public string TopTenPosition { get; set; } = "top";
 
+    /// <summary>Gets or sets what the top 10 shelf ranks: "watched" (the titles watched most), "rated" (the best community ratings) or "daily" (ten titles shuffled each day).</summary>
+    public string TopTenMode { get; set; } = "watched";
+
     /// <summary>Gets or sets the corner of the posters for the quality marks: "bottomLeft", "bottomRight" or "topLeft".</summary>
     public string QualityCorner { get; set; } = "bottomLeft";
 }

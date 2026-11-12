@@ -4,12 +4,18 @@ namespace Jellyfin.Plugin.Afterglow.Configuration;
 public static class ConfigChoices
 {
     private static readonly string[] TopTenPositions = ["top", "afterContinue", "end"];
+    private static readonly string[] TopTenModes = ["watched", "rated", "daily"];
     private static readonly string[] QualityCorners = ["bottomLeft", "bottomRight", "topLeft"];
 
     /// <summary>Where the top 10 shelf goes on the home page.</summary>
     /// <param name="value">What was saved.</param>
     /// <returns>"top", "afterContinue" or "end".</returns>
     public static string TopTenPosition(string? value) => Pick(value, TopTenPositions);
+
+    /// <summary>What the top 10 shelf ranks.</summary>
+    /// <param name="value">What was saved.</param>
+    /// <returns>"watched", "rated" or "daily".</returns>
+    public static string TopTenMode(string? value) => Pick(value, TopTenModes);
 
     /// <summary>Which corner of a poster the quality marks sit in.</summary>
     /// <param name="value">What was saved.</param>
